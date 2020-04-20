@@ -21,7 +21,7 @@ class Agent(object):
 
 		# multiply because rand not generate big odd numbers
 		while len(self.strategiesPayoff) < S:
-			self.strategiesPayoff[int(np.random.uniform(0, (2**2**M) - 1))] = 0
+			self.strategiesPayoff[random.randint(0, (2**2**M) - 1)] = 0
 
 		self.id = id
 

@@ -15,8 +15,8 @@ from minority_game import MinorityGame
 
 
 def simulate_phases():
-	N = [1, 3, 5, 7, 9, 11, 21, 51, 151, 251]#, 501, 1001, 2001, 5001]
-	M = [1, 2, 3, 4, 5]
+	N = [3, 5, 7, 9, 11, 31, 51, 101, 151, 251, 501]#, 1001, 2001, 5001]
+	M = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 	alpha = np.zeros(( len(N), len(M) ))
 	volatility = np.zeros(( len(N), len(M) ))
@@ -32,10 +32,10 @@ def simulate_phases():
 
 
 	# fig = plt.figure()
-	for i in range(N):
-		logger.info(f"N[i] - {N[i]}")
-		for j in range(M):
-			logger.info(f"M[j] -{M[j]}")
+	for i in range(len(N)):
+		logger.info(f"N agents:\t{N[i]}")
+		for j in range(len(M)):
+			logger.info(f"M brain:\t\t{M[j]}")
 			# N = 1001
 			# M = 3
 			S = 2
@@ -50,12 +50,13 @@ def simulate_phases():
 				alpha[i][j] += mg.alpha
 				volatility[i][j] += mg.volatility
 
-			logger.info(attendence[i][j])
+			logger.info(f"att[i][j]: {attendence[i][j]}")
 			attendence[i][j] /= loops
 			alpha[i][j] /= loops
 			volatility[i][j] /= loops
-			logger.info(loops)
-			logger.info(attendence[i][j])
+			logger.info(f"loops: {loops}")
+			logger.info(f"att[i][j]: {attendence[i][j]}")
+
 		plt.plot(alpha[i], volatility[i], '--', marker='x', label=str(N[i]))
 
 		np.savetxt('data/alpha.txt', alpha)
@@ -67,44 +68,37 @@ def simulate_phases():
 	plt.yscale('log')
 	plt.grid(True)
 	plt.legend()
-	plt.xlabel('alpha = (2^M)/N', fontsize=18)
-	plt.ylabel('volatility = (sigma^2)/N', fontsize=16)
+	plt.xlabel('α = (2^M)/N', fontsize=18)
+	plt.ylabel('volatility = (σ^2)/N', fontsize=16)
 	# plt.show()
-	plt.savefig('plots/mg.png')
+	plt.savefig('plots/mg.png', dpi=240)
 
 
-def simulate_symmetric():
-	# symmetric
-	N = 2001
-	M = 4
-	S = 2
+def simulate_symmetric(N, M, S):
+	mu = np.zeros((2**M))
+	probabilities = np.zeros((2**M))
+
 	mg = MinorityGame(N, S, M)
-	mg.simulate(400)
+	mg.simulate(300)
 	mg.printStatistics()
 
-	ii = np.zeros((2**M))
-	probabilities = np.zeros((2**M))
 	for i in range(2**M):
-		ii[i] = i+1
+		mu[i] = i+1
 		probabilities[i] = mg.historyOfOneInMinority[i]/mg.historyOccurance[i]
 
-	plt.plot(ii, probabilities, '--', marker='o')
-	plt.xlabel('mu', fontsize=18)
-	plt.ylabel('P(1|mu)', fontsize=16)
+	plt.bar(mu, probabilities)
+	plt.xlabel('µ', fontsize=18)
+	plt.ylabel('P(1|µ)', fontsize=16)
+	plt.title(f"Symmetric phase: N={N}, M={M}, S={S}, α={((2**M)/N):.3f}")
 	plt.ylim([0,1])
 	plt.xlim([1,2**M])
 	plt.grid(True)
-	# plt.show()
-	plt.savefig('plots/symmetric.png')
+
+	plt.savefig('plots/symmetric.png', dpi=240)
 
 
-def simulate_asymmetric():
-	# asymmetric
-	loops = 3
-	N = 6
-	M = 5
-	S = 2
-	ii = np.zeros((2**M))
+def simulate_asymmetric(N, M, S, loops=10):
+	mu = np.zeros((2**M))
 	probabilities = np.zeros((2**M))
 
 	for k in range(loops):
@@ -113,23 +107,22 @@ def simulate_asymmetric():
 		mg.printStatistics()
 
 		for i in range(2**M):
-			ii[i] = i+1
+			mu[i] = i+1
 			if mg.historyOccurance[i] > 0:
 				probabilities[i] += mg.historyOfOneInMinority[i]/mg.historyOccurance[i]
-			else:
-				probabilities[i] += 0
 
-	for i in range(2**M):
-		probabilities[i] /= loops
+	probabilities /= loops
 
-	plt.plot(ii, probabilities, '--', marker='o')
-	plt.xlabel('mu', fontsize=18)
-	plt.ylabel('P(1|mu)', fontsize=16)
+	plt.bar(mu, probabilities)
+	plt.xlabel('µ', fontsize=18)
+	plt.ylabel('P(1|µ)', fontsize=16)
+	plt.title(f"Asymmetric phase: N={N}, M={M}, S={S}, α={((2**M)/N):.3f}")
 	plt.ylim([0,1])
 	plt.xlim([1,2**M])
 	plt.grid(True)
-	# plt.show()
-	plt.savefig('plots/asymmetric.png')
+	# plt.tight_layout()
+
+	plt.savefig('plots/asymmetric.png', dpi=240)
 
 
 def simulate_predictability():
@@ -153,10 +146,10 @@ def simulate_predictability():
 	# mg.printStatistics()
 
 	# fig = plt.figure()
-	for i in range(N):
-		logger.info(N[i])
-		for j in range(M):
-			logger.info(M[j])
+	for i in range(len(N)):
+		logger.info(f"N agents:\t{N[i]}")
+		for j in range(len(M)):
+			logger.info(f"M brain:\t\t{M[j]}")
 			# N = 1001
 			# M = 3
 			S = 2
@@ -195,23 +188,29 @@ def simulate_predictability():
 	# plt.yscale('log')
 	plt.grid(True)
 	plt.legend()
-	plt.xlabel('alpha = (2^M)/N', fontsize=18)
-	plt.ylabel('volatility = (sigma^2)/N', fontsize=16)
+	plt.xlabel('α = (2^M)/N', fontsize=18)
+	plt.ylabel('volatility = (σ^2)/N', fontsize=16)
 	# plt.show()
-	plt.savefig('plots/predictability.png')
+	plt.savefig('plots/predictability.png', dpi=240)
 
 
 
 if __name__ == '__main__':
 	random.seed(42)
 
-	simulate_phases()
+	# simulate_phases()
+	# plt.clf()
+
+	N = 251
+	M = 5
+	S = 2
+	simulate_symmetric(N=N, M=M, S=S)
 	plt.clf()
 
-	simulate_symmetric()
-	plt.clf()
-
-	simulate_asymmetric()
+	N = 251
+	M = 7
+	S = 2
+	simulate_asymmetric(N=N, M=M, S=S)
 	plt.clf()
 
 	simulate_predictability()
