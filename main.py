@@ -60,9 +60,9 @@ if __name__ == '__main__':
 	# 		logger.info(attendence[i][j])
 	# 	plt.plot(alpha[i], volatility[i], '--', marker='x', label=str(N[i]))
 
-	# 	np.savetxt('alpha.txt', alpha)
-	# 	np.savetxt('attendence.txt', attendence)
-	# 	np.savetxt('volatility.txt', volatility)
+	# 	np.savetxt('data/alpha.txt', alpha)
+	# 	np.savetxt('data/attendence.txt', attendence)
+	# 	np.savetxt('data/volatility.txt', volatility)
 
 
 	# plt.xscale('log')
@@ -184,10 +184,10 @@ if __name__ == '__main__':
 			logger.info(attendence[i][j])
 ####		plt.plot(alpha[i], predictability[i], '', marker='x', label=str(N[i]))
 
-		np.savetxt('alpha.txt', alpha)
-		np.savetxt('attendence.txt', attendence)
-		np.savetxt('volatility.txt', volatility)
-		np.savetxt('volatility.txt', predictability)
+		np.savetxt('data/alpha.txt', alpha)
+		np.savetxt('data/attendence.txt', attendence)
+		np.savetxt('data/volatility.txt', volatility)
+		np.savetxt('data/predictability.txt', predictability)
 
 
 """	plt.xscale('log')
