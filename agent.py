@@ -9,6 +9,10 @@ class Agent(object):
 	"""docstring for Agent"""
 
 	def __init__(self, S, M, id):
+		"""
+		S - number of strategies
+		M - brain of an agent
+		"""
 		super(Agent, self).__init__()
 
 		self.agentPayoff = 0

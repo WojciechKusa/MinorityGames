@@ -8,8 +8,8 @@ from agent import Agent
 
 class MinorityGame(object):
 	"""docstring for MinorityGame
-		N - agents amount
-		S - strategies amount
+		N - number of agents
+		S - number of strategies
 		M - brain of an agent
 	"""
 
@@ -51,7 +51,7 @@ class MinorityGame(object):
 		logger.debug("mean attendence: %f" % (np.mean(self.attendence)))
 		logger.debug("var attendence: %f" % (np.var(self.attendence)))
 
-		logger.info("volatility: %f" % (np.var(self.attendence)/self.N))
+		logger.debug("volatility: %f" % (np.var(self.attendence)/self.N))
 
 		self.volatility = np.var(self.attendence)/(self.N)
 		logger.debug("alpha: %f" % self.alpha)
@@ -83,18 +83,18 @@ class MinorityGame(object):
 			for i in range(len(self.history) - self.M, len(self.history)):
 				history += j*self.history[i]
 				j *= 2
-			# print ("history:", history)
+			# print("history:", history)
 
 			self.historyOccurance[history] += 1
 
 			attendence = 0
 			# for each agent make a decision and calc attendence
 			for agent in self.agents:
-				# logger.info("agent.id", agent.id)
+				# logger.debug("agent.id", agent.id)
 				attendence += agent.decide(history)
 
 			self.attendence.append(attendence)
-			# logger.info("attendence:", attendence)
+			# logger.debug("attendence:", attendence)
 
 			self.historyAttendence[history] += attendence
 
@@ -104,24 +104,23 @@ class MinorityGame(object):
 			elif attendence < 0:
 				if -attendence == len(self.agents):
 					c = 0
-					logger.info("history: %s" % history)
+					logger.debug("history: %s" % history)
 					for agent in self.agents:
-						logger.info("agentx: %s %s" % (agent.id, agent.decide(history)))
+						logger.debug("agentx: %s %s" % (agent.id, agent.decide(history)))
 						c += agent.decide(history)
-					logger.info("c = %d", c)
+					logger.debug("c = %d", c)
 
 				self.history.append( 0 )
 			else:
 				c = 0
 				for agent in self.agents:
-					logger.info("agentx: %s %s" % (agent.id, agent.decide(history)))
+					logger.debug("agentx: %s %s" % (agent.id, agent.decide(history)))
 					c += agent.decide(history)
-				logger.info("c = %d" % c)
+				logger.debug("c = %d" % c)
 
 			# update strategy payoff
 			for agent in self.agents:
 				agent.updateStrategies(attendence, history)
 
-			logger.info("simulation time: %d" % t)
-			logger.info("  ____  ")
+			logger.debug(f"simulation time: {t}")
 			t += 1
