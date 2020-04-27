@@ -10,7 +10,7 @@ class Agent(object):
 
 	def __init__(self, S, M, id):
 		"""
-		S - number of strategies
+		S - number of strategies, len of strategiesPayoff
 		M - brain of an agent
 		"""
 		super(Agent, self).__init__()
@@ -18,6 +18,8 @@ class Agent(object):
 		self.agentPayoff = 0
 		self.agentDecision = 0
 		self.strategiesPayoff = dict()
+
+		self.M = M
 
 		# multiply because rand not generate big odd numbers
 		while len(self.strategiesPayoff) < S:
@@ -37,14 +39,16 @@ class Agent(object):
 		strategy = random.choice(maxVals)
 
 		logger.debug("strategy: %s", (strategy))
-		logger.debug("cross: %f " % (strategy[0] & 2**history))
+		if self.M < 10:
+			logger.debug("cross: %f " % (strategy[0] & 2**history))
 
 		if strategy[0] & 2**history == 2**history:
 			self.agentDecision = 1
 			return 1
 		else:
-			logger.debug("str: %f " % (strategy[0]))
-			logger.debug("hist: %f" % (2**history))
+			if self.M < 10:
+				logger.debug("str: %f " % (strategy[0]))
+				logger.debug("hist: %f" % (2**history))
 			self.agentDecision = -1
 			return -1
 
